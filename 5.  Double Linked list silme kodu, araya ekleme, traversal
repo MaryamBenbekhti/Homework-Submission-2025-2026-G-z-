@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+
+void traverse(struct Node *head) {
+    struct Node *temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+
+void insertAfter(struct Node *prevNode, int value) {
+    if (prevNode == NULL) return;
+
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = value;
+
+    newNode->next = prevNode->next;
+    newNode->prev = prevNode;
+
+    if (prevNode->next != NULL)
+        prevNode->next->prev = newNode;
+
+    prevNode->next = newNode;
+}
+
+
+void deleteNode(struct Node **head, struct Node *delNode) {
+    if (*head == NULL || delNode == NULL) return;
+
+    if (*head == delNode)
+        *head = delNode->next;
+
+    if (delNode->next != NULL)
+        delNode->next->prev = delNode->prev;
+
+    if (delNode->prev != NULL)
+        delNode->prev->next = delNode->next;
+
+    free(delNode);
+}
+
+int main() {
+    struct Node *head = NULL;
+
+    
+    head = (struct Node *)malloc(sizeof(struct Node));
+    head->data = 10;
+    head->prev = NULL;
+    head->next = NULL;
+
+   
+    struct Node *second = (struct Node *)malloc(sizeof(struct Node));
+    second->data = 20;
+    second->prev = head;
+    second->next = NULL;
+    head->next = second;
+
+    printf("Original list: ");
+    traverse(head);
+
+    insertAfter(head, 15);
+    printf("After inserting 15: ");
+    traverse(head);
+
+    deleteNode(&head, second);
+    printf("After deleting 20: ");
+    traverse(head);
+
+    return 0;
+}
