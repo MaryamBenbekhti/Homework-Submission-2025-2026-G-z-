@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+
+void traverse(struct Node *head) {
+    struct Node *temp = head;
+
+    if (head == NULL) return;
+
+    do {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+
+    printf("\n");
+}
+
+
+void insertAfter(struct Node *prevNode, int value) {
+    if (prevNode == NULL) return;
+
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->data = value;
+
+    newNode->next = prevNode->next;
+    prevNode->next = newNode;
+}
+
+
+void deleteNode(struct Node **head, int key) {
+    if (*head == NULL) return;
+
+    struct Node *curr = *head;
+    struct Node *prev = NULL;
+
+    
+    if (curr->data == key) {
+
+        
+        if (curr->next == curr) {
+            free(curr);
+            *head = NULL;
+            return;
+        }
+
+        
+        while (curr->next != *head)
+            curr = curr->next;
+
+        curr->next = (*head)->next;
+        free(*head);
+        *head = curr->next;
+        return;
+    }
+
+    
+    prev = *head;
+    curr = prev->next;
+
+    while (curr != *head) {
+        if (curr->data == key) {
+            prev->next = curr->next;
+            free(curr);
+            return;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+}
+
+int main() {
+    struct Node *head = NULL;
+
+    
+    head = (struct Node *)malloc(sizeof(struct Node));
+    head->data = 10;
+    head->next = head;
+
+    
+    struct Node *second = (struct Node *)malloc(sizeof(struct Node));
+    second->data = 20;
+    second->next = head;
+    head->next = second;
+
+    printf("Original list: ");
+    traverse(head);
+
+    insertAfter(head, 15);
+    printf("After inserting 15: ");
+    traverse(head);
+
+    deleteNode(&head, 20);
+    printf("After deleting 20: ");
+    traverse(head);
+
+    return 0;
+}
